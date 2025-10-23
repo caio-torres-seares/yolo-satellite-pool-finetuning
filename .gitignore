@@ -1,0 +1,14 @@
+# Arquivos de modelo
+*.pt
+*.bin
+
+.env
+.ipynb_checkpoints
+__pycache__/
+
+train
+test
+valid
+dataset
+results_pools/
+results
