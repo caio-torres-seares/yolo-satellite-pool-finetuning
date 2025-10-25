@@ -9,6 +9,7 @@ __pycache__/
 train
 test
 valid
-dataset
+dataset/
 results_pools/
 results
+models/
