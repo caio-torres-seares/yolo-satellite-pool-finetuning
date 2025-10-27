@@ -15,6 +15,9 @@ This project uses **Machine Learning** and **satellite image analysis** to estim
 
 **mAP50-95 = ~51.5%**
 
+![Fine Tuning Results](images/fine_tuning_training_results.png)
+
+
 ---
 
 ## 🚀 How It Works
