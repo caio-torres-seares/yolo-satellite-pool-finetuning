@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_867be7416263021b1af06b027f838b5a {
+                    position: relative;
+                    width: 100.0%;
+                    height: 700.0px;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdn.jsdelivr.net/gh/python-visualization/folium@main/folium/templates/leaflet_heat.min.js"></script>
+</head>
+<body>
+    
+    
+<div style="position: fixed; 
+            top: 10px; left: 50px; width: 450px; height: 100px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #fff; z-index: 9999; 
+            font-size: 14px; padding: 15px; border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); color: white;">
+    <h3 style="margin: 0 0 8px 0; font-size: 18px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+        Density of Swimming Pools in São Paulo
+    </h3>
+    <p style="margin: 0 0 5px 0; font-size: 13px; opacity: 0.9;">
+        <strong>Estimated total:</strong> ~8.500 pools
+    </p>
+    <p style="margin: 0; font-size: 12px; opacity: 0.8;">
+        Based on 1,000 systematic sampling points
+    </p>
+</div>
+    
+<div style="position: fixed; 
+            bottom: 50px; right: 50px; width: 220px; height: 140px; 
+            background: rgba(255,255,255,0.95); border: 2px solid #ddd; z-index: 9999; 
+            font-size: 12px; padding: 15px; border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2); backdrop-filter: blur(10px);">
+    <h4 style="margin: 0 0 12px 0; color: #2c3e50; font-size: 14px;">📋 Legenda</h4>
+    <div style="margin: 5px 0;">
+        <span style="color: #e74c3c; font-size: 16px;">🔴</span> 
+        <span style="margin-left: 8px;">High density (>15/km²)</span>
+    </div>
+    <div style="margin: 5px 0;">
+        <span style="color: #f39c12; font-size: 16px;">🟡</span> 
+        <span style="margin-left: 8px;">Medium density (5-15/km²)</span>
+    </div>
+    <div style="margin: 5px 0;">
+        <span style="color: #27ae60; font-size: 16px;">🟢</span> 
+        <span style="margin-left: 8px;">Low density (<5/km²)</span>
+    </div>
+    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #eee; 
+                font-size: 10px; color: #666; text-align: center;">
+        Circle size = density
+    </div>
+</div>
+    
+<div style="position: fixed; 
+            bottom: 50px; left: 50px; width: 200px; height: 120px; 
+            background: rgba(255,255,255,0.95); border: 2px solid #ddd; z-index: 9999; 
+            font-size: 12px; padding: 15px; border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2); backdrop-filter: blur(10px);">
+    <h4 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 14px;">Statistics</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div style="text-align: center; background: #f8f9fa; padding: 8px; border-radius: 5px;">
+            <div style="font-weight: bold; color: #667eea;">51</div>
+            <div style="font-size: 10px; color: #666;">districts</div>
+        </div>
+        <div style="text-align: center; background: #f8f9fa; padding: 8px; border-radius: 5px;">
+            <div style="font-weight: bold; color: #667eea;">15.1</div>
+            <div style="font-size: 10px; color: #666;">average density</div>
+        </div>
+    </div>
+</div>
+    
+            <div class="folium-map" id="map_867be7416263021b1af06b027f838b5a" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_867be7416263021b1af06b027f838b5a = L.map(
+                "map_867be7416263021b1af06b027f838b5a",
+                {
+                    center: [-23.569705882352938, -46.61588235294117],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": true,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_d748efdac0ad7cf204c4c190154d72e2 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d748efdac0ad7cf204c4c190154d72e2.addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var tile_layer_39f3d7f5fe2a463d0f16645f07ca7e24 = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "Tiles \u0026copy; Esri \u0026mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_39f3d7f5fe2a463d0f16645f07ca7e24.addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var heat_map_869a02b57f07dff0b61ca789afaac1dd = L.heatLayer(
+                [[-23.64, -46.695, 1.0], [-23.625, -46.727, 0.5210526315789473], [-23.521, -46.707, 0.4631578947368421], [-23.603, -46.705, 0.3859649122807018], [-23.491, -46.748, 0.3308270676691729], [-23.568, -46.756, 0.32658569500674767], [-23.676, -46.682, 0.2968960863697706], [-23.578, -46.466, 0.2756892230576441], [-23.494, -46.637, 0.23157894736842105], [-23.441, -46.595, 0.22625529340592862], [-23.462, -46.662, 0.2205513784461153], [-23.511, -46.607, 0.2205513784461153], [-23.598, -46.739, 0.2205513784461153], [-23.639, -46.763, 0.216140350877193], [-23.52, -46.671, 0.1929824561403509], [-23.515, -46.413, 0.17153996101364521], [-23.682, -46.652, 0.1543859649122807], [-23.532, -46.599, 0.1543859649122807], [-23.603, -46.472, 0.1286549707602339], [-23.559, -46.403, 0.12188365650969529], [-23.674, -46.786, 0.1206140350877193], [-23.502, -46.677, 0.09649122807017545], [-23.611, -46.504, 0.09081527347781218], [-23.504, -46.518, 0.08906882591093118], [-23.447, -46.734, 0.08822055137844612], [-23.816, -46.723, 0.0849122807017544], [-23.708, -46.64, 0.07985480943738658], [-23.5, -46.464, 0.07719298245614035], [-23.482, -46.404, 0.07719298245614035], [-23.491, -46.485, 0.07017543859649122], [-23.482, -46.73, 0.06432748538011696], [-23.592, -46.786, 0.052631578947368425], [-23.671, -46.745, 0.052631578947368425], [-23.728, -46.7, 0.048245614035087724], [-23.515, -46.568, 0.042884990253411304], [-23.459, -46.693, 0.040627885503231764], [-23.588, -46.399, 0.03735144312393888], [-23.629, -46.454, 0.03675856307435255], [-23.71, -46.774, 0.03590371277029784], [-23.564, -46.492, 0.03508771929824561], [-23.763, -46.685, 0.03385657125269314], [-23.404, -46.741, 0.030877192982456145], [-23.629, -46.595, 0.024122807017543862], [-23.441, -46.787, 0.020313942751615882], [-23.572, -46.432, 0.018379281537176276], [-23.607, -46.432, 0.013784461152882206], [-23.534, -46.408, 0.0], [-23.547, -46.751, 0.0], [-23.456, -46.577, 0.0], [-23.664, -46.643, 0.0], [-23.507, -46.384, 0.0]],
+                {
+  "minOpacity": 0.4,
+  "maxZoom": 18,
+  "radius": 35,
+  "blur": 25,
+  "gradient": {
+  0.0: "blue",
+  0.2: "cyan",
+  0.4: "lime",
+  0.6: "yellow",
+  0.8: "orange",
+  1.0: "red",
+},
+}
+            );
+        
+    
+            heat_map_869a02b57f07dff0b61ca789afaac1dd.addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var feature_group_88c519edbd3db4b25746bb2004086a6f = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_adcd80828309e2e12b0545b16f654383 = L.circleMarker(
+                [-23.64, -46.695],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_38a7871f993643f486bb2d3fb90ac350 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_598f8053e8de104597a26b525fa3b1a7 = $(`<div id="html_598f8053e8de104597a26b525fa3b1a7" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 SANTO AMARO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">104.9</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">57</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 22<br>                 📏 <strong>Area:</strong> 0.54 km²<br>                 📈 <strong>Average/image:</strong> 2.59             </div>         </div>     </div>     </div>`)[0];
+                popup_38a7871f993643f486bb2d3fb90ac350.setContent(html_598f8053e8de104597a26b525fa3b1a7);
+            
+        
+
+        circle_marker_adcd80828309e2e12b0545b16f654383.bindPopup(popup_38a7871f993643f486bb2d3fb90ac350)
+        ;
+
+        
+    
+    
+            circle_marker_adcd80828309e2e12b0545b16f654383.bindTooltip(
+                `<div>
+                     🔴 SANTO AMARO: 104.9 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f9498de2b9342d7ee5a9b7bee6a791f8 = L.circleMarker(
+                [-23.625, -46.727],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_54cc8b88461654d9224907b2888565a9 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_b0ea2f5cd34f1f0ef3e1acb6a63838ea = $(`<div id="html_b0ea2f5cd34f1f0ef3e1acb6a63838ea" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 VILA ANDRADE             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">54.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">27</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 20<br>                 📏 <strong>Area:</strong> 0.49 km²<br>                 📈 <strong>Average/image:</strong> 1.35             </div>         </div>     </div>     </div>`)[0];
+                popup_54cc8b88461654d9224907b2888565a9.setContent(html_b0ea2f5cd34f1f0ef3e1acb6a63838ea);
+            
+        
+
+        circle_marker_f9498de2b9342d7ee5a9b7bee6a791f8.bindPopup(popup_54cc8b88461654d9224907b2888565a9)
+        ;
+
+        
+    
+    
+            circle_marker_f9498de2b9342d7ee5a9b7bee6a791f8.bindTooltip(
+                `<div>
+                     🔴 VILA ANDRADE: 54.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7dccd64bd22543813d64c4f2faab839f = L.circleMarker(
+                [-23.521, -46.707],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_dde53414059c1ba227cc010b3cad8767 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_9fb1764f219d7547fbfea4f8a26bcb02 = $(`<div id="html_9fb1764f219d7547fbfea4f8a26bcb02" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 LAPA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">48.6</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">12</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 10<br>                 📏 <strong>Area:</strong> 0.25 km²<br>                 📈 <strong>Average/image:</strong> 1.20             </div>         </div>     </div>     </div>`)[0];
+                popup_dde53414059c1ba227cc010b3cad8767.setContent(html_9fb1764f219d7547fbfea4f8a26bcb02);
+            
+        
+
+        circle_marker_7dccd64bd22543813d64c4f2faab839f.bindPopup(popup_dde53414059c1ba227cc010b3cad8767)
+        ;
+
+        
+    
+    
+            circle_marker_7dccd64bd22543813d64c4f2faab839f.bindTooltip(
+                `<div>
+                     🔴 LAPA: 48.6 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2f18f3a2080383d27211334e02f4a35c = L.circleMarker(
+                [-23.603, -46.705],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_0e91f7a3741aeb50b406cf3f3b413888 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_beee2a1f511fc00e8239b8b98c7a54f8 = $(`<div id="html_beee2a1f511fc00e8239b8b98c7a54f8" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 MORUMBI             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">40.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">10</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 10<br>                 📏 <strong>Area:</strong> 0.25 km²<br>                 📈 <strong>Average/image:</strong> 1.00             </div>         </div>     </div>     </div>`)[0];
+                popup_0e91f7a3741aeb50b406cf3f3b413888.setContent(html_beee2a1f511fc00e8239b8b98c7a54f8);
+            
+        
+
+        circle_marker_2f18f3a2080383d27211334e02f4a35c.bindPopup(popup_0e91f7a3741aeb50b406cf3f3b413888)
+        ;
+
+        
+    
+    
+            circle_marker_2f18f3a2080383d27211334e02f4a35c.bindTooltip(
+                `<div>
+                     🔴 MORUMBI: 40.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_83192f99e08bc63256a371a3c25c2633 = L.circleMarker(
+                [-23.491, -46.748],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_2581f545cf003497166130b150ae0cd5 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_700ce17f0c8a5cf031134e202d23bf74 = $(`<div id="html_700ce17f0c8a5cf031134e202d23bf74" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 SAO DOMINGOS             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">34.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">6</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 7<br>                 📏 <strong>Area:</strong> 0.17 km²<br>                 📈 <strong>Average/image:</strong> 0.86             </div>         </div>     </div>     </div>`)[0];
+                popup_2581f545cf003497166130b150ae0cd5.setContent(html_700ce17f0c8a5cf031134e202d23bf74);
+            
+        
+
+        circle_marker_83192f99e08bc63256a371a3c25c2633.bindPopup(popup_2581f545cf003497166130b150ae0cd5)
+        ;
+
+        
+    
+    
+            circle_marker_83192f99e08bc63256a371a3c25c2633.bindTooltip(
+                `<div>
+                     🔴 SAO DOMINGOS: 34.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_566df9070c9b0f85eed737a532d938c0 = L.circleMarker(
+                [-23.568, -46.756],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_fc43f74f68c2693e6922a15607fe50f2 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_c32931076338f4557f1c98dd24980b84 = $(`<div id="html_c32931076338f4557f1c98dd24980b84" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 RIO PEQUENO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">34.3</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">11</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 13<br>                 📏 <strong>Area:</strong> 0.32 km²<br>                 📈 <strong>Average/image:</strong> 0.85             </div>         </div>     </div>     </div>`)[0];
+                popup_fc43f74f68c2693e6922a15607fe50f2.setContent(html_c32931076338f4557f1c98dd24980b84);
+            
+        
+
+        circle_marker_566df9070c9b0f85eed737a532d938c0.bindPopup(popup_fc43f74f68c2693e6922a15607fe50f2)
+        ;
+
+        
+    
+    
+            circle_marker_566df9070c9b0f85eed737a532d938c0.bindTooltip(
+                `<div>
+                     🔴 RIO PEQUENO: 34.3 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_99b7574deda5651f5bba17ea4418226e = L.circleMarker(
+                [-23.676, -46.682],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_d0dd2454b8ac75b0e287141c277977b0 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_34d24c64a0c4c2745c46b573983b4a58 = $(`<div id="html_34d24c64a0c4c2745c46b573983b4a58" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 CAMPO GRANDE             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">31.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">10</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 13<br>                 📏 <strong>Area:</strong> 0.32 km²<br>                 📈 <strong>Average/image:</strong> 0.77             </div>         </div>     </div>     </div>`)[0];
+                popup_d0dd2454b8ac75b0e287141c277977b0.setContent(html_34d24c64a0c4c2745c46b573983b4a58);
+            
+        
+
+        circle_marker_99b7574deda5651f5bba17ea4418226e.bindPopup(popup_d0dd2454b8ac75b0e287141c277977b0)
+        ;
+
+        
+    
+    
+            circle_marker_99b7574deda5651f5bba17ea4418226e.bindTooltip(
+                `<div>
+                     🔴 CAMPO GRANDE: 31.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_192833eb75dc524b7017d406f78e3d6d = L.circleMarker(
+                [-23.578, -46.466],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_9669952ecb9f72e16971d23b674063d1 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_b0662d62f454d18adb53ce2072ad4e3c = $(`<div id="html_b0662d62f454d18adb53ce2072ad4e3c" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 PARQUE DO CARMO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">28.9</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">5</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 7<br>                 📏 <strong>Area:</strong> 0.17 km²<br>                 📈 <strong>Average/image:</strong> 0.71             </div>         </div>     </div>     </div>`)[0];
+                popup_9669952ecb9f72e16971d23b674063d1.setContent(html_b0662d62f454d18adb53ce2072ad4e3c);
+            
+        
+
+        circle_marker_192833eb75dc524b7017d406f78e3d6d.bindPopup(popup_9669952ecb9f72e16971d23b674063d1)
+        ;
+
+        
+    
+    
+            circle_marker_192833eb75dc524b7017d406f78e3d6d.bindTooltip(
+                `<div>
+                     🔴 PARQUE DO CARMO: 28.9 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6916c2b8e45788057bc0b4f30cefece7 = L.circleMarker(
+                [-23.494, -46.637],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_5414965958bc0e04d0a8edc330daebb6 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_3df29db6a20cccdef4eed412072cb69f = $(`<div id="html_3df29db6a20cccdef4eed412072cb69f" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 SANTANA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">24.3</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">3</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 5<br>                 📏 <strong>Area:</strong> 0.12 km²<br>                 📈 <strong>Average/image:</strong> 0.60             </div>         </div>     </div>     </div>`)[0];
+                popup_5414965958bc0e04d0a8edc330daebb6.setContent(html_3df29db6a20cccdef4eed412072cb69f);
+            
+        
+
+        circle_marker_6916c2b8e45788057bc0b4f30cefece7.bindPopup(popup_5414965958bc0e04d0a8edc330daebb6)
+        ;
+
+        
+    
+    
+            circle_marker_6916c2b8e45788057bc0b4f30cefece7.bindTooltip(
+                `<div>
+                     🔴 SANTANA: 24.3 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7597b10c5b6c11d9fdb6090b1f9a2ca5 = L.circleMarker(
+                [-23.441, -46.595],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_7af4f98c3e1e1475a6496f0cef54c149 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_2e8b65ea43b268f585ea159bb66fb3b7 = $(`<div id="html_2e8b65ea43b268f585ea159bb66fb3b7" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 TREMEMBE             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">23.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">17</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 29<br>                 📏 <strong>Area:</strong> 0.72 km²<br>                 📈 <strong>Average/image:</strong> 0.59             </div>         </div>     </div>     </div>`)[0];
+                popup_7af4f98c3e1e1475a6496f0cef54c149.setContent(html_2e8b65ea43b268f585ea159bb66fb3b7);
+            
+        
+
+        circle_marker_7597b10c5b6c11d9fdb6090b1f9a2ca5.bindPopup(popup_7af4f98c3e1e1475a6496f0cef54c149)
+        ;
+
+        
+    
+    
+            circle_marker_7597b10c5b6c11d9fdb6090b1f9a2ca5.bindTooltip(
+                `<div>
+                     🔴 TREMEMBE: 23.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3826fce39da326aa3e86ed20da05940c = L.circleMarker(
+                [-23.462, -46.662],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_732f1e964fbe50ea8a2082de94c2a333 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_c8fb17418d82f2b1922b57600f8111d5 = $(`<div id="html_c8fb17418d82f2b1922b57600f8111d5" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 CACHOEIRINHA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">23.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 7<br>                 📏 <strong>Area:</strong> 0.17 km²<br>                 📈 <strong>Average/image:</strong> 0.57             </div>         </div>     </div>     </div>`)[0];
+                popup_732f1e964fbe50ea8a2082de94c2a333.setContent(html_c8fb17418d82f2b1922b57600f8111d5);
+            
+        
+
+        circle_marker_3826fce39da326aa3e86ed20da05940c.bindPopup(popup_732f1e964fbe50ea8a2082de94c2a333)
+        ;
+
+        
+    
+    
+            circle_marker_3826fce39da326aa3e86ed20da05940c.bindTooltip(
+                `<div>
+                     🔴 CACHOEIRINHA: 23.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0780645c24f97565515f6ba8954fd5c5 = L.circleMarker(
+                [-23.511, -46.607],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_7ae6b3ad2bfa9199d5f30d725855c185 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_95a50d2abe80c56632f3ea846586ff52 = $(`<div id="html_95a50d2abe80c56632f3ea846586ff52" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 VILA GUILHERME             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">23.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 7<br>                 📏 <strong>Area:</strong> 0.17 km²<br>                 📈 <strong>Average/image:</strong> 0.57             </div>         </div>     </div>     </div>`)[0];
+                popup_7ae6b3ad2bfa9199d5f30d725855c185.setContent(html_95a50d2abe80c56632f3ea846586ff52);
+            
+        
+
+        circle_marker_0780645c24f97565515f6ba8954fd5c5.bindPopup(popup_7ae6b3ad2bfa9199d5f30d725855c185)
+        ;
+
+        
+    
+    
+            circle_marker_0780645c24f97565515f6ba8954fd5c5.bindTooltip(
+                `<div>
+                     🔴 VILA GUILHERME: 23.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b3c3dbe9f293d05dbbc693103fac15e3 = L.circleMarker(
+                [-23.598, -46.739],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_b4c1e919736a327be6eae698c6e41e3f = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_edbb3fbf6c5a582784fda16fb17a8a8c = $(`<div id="html_edbb3fbf6c5a582784fda16fb17a8a8c" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 VILA SONIA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">23.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">8</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 14<br>                 📏 <strong>Area:</strong> 0.35 km²<br>                 📈 <strong>Average/image:</strong> 0.57             </div>         </div>     </div>     </div>`)[0];
+                popup_b4c1e919736a327be6eae698c6e41e3f.setContent(html_edbb3fbf6c5a582784fda16fb17a8a8c);
+            
+        
+
+        circle_marker_b3c3dbe9f293d05dbbc693103fac15e3.bindPopup(popup_b4c1e919736a327be6eae698c6e41e3f)
+        ;
+
+        
+    
+    
+            circle_marker_b3c3dbe9f293d05dbbc693103fac15e3.bindTooltip(
+                `<div>
+                     🔴 VILA SONIA: 23.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9ceb8272628664831fce945cd021222f = L.circleMarker(
+                [-23.639, -46.763],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_795da47a0b26ef94ce3c99c9a38ac73e = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_ecdb0c03940774e0878314ecc22608a3 = $(`<div id="html_ecdb0c03940774e0878314ecc22608a3" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 CAMPO LIMPO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">22.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">14</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 25<br>                 📏 <strong>Area:</strong> 0.62 km²<br>                 📈 <strong>Average/image:</strong> 0.56             </div>         </div>     </div>     </div>`)[0];
+                popup_795da47a0b26ef94ce3c99c9a38ac73e.setContent(html_ecdb0c03940774e0878314ecc22608a3);
+            
+        
+
+        circle_marker_9ceb8272628664831fce945cd021222f.bindPopup(popup_795da47a0b26ef94ce3c99c9a38ac73e)
+        ;
+
+        
+    
+    
+            circle_marker_9ceb8272628664831fce945cd021222f.bindTooltip(
+                `<div>
+                     🔴 CAMPO LIMPO: 22.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_41ff60eddc844bebc86821244b1b8f87 = L.circleMarker(
+                [-23.52, -46.671],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 24.291497975708502, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_b193cde9fa282ebbde6381fc4af5ba65 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_5a032aba531b2dd4721e128d0a8827a5 = $(`<div id="html_5a032aba531b2dd4721e128d0a8827a5" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 BARRA FUNDA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">20.2</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">7</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 14<br>                 📏 <strong>Area:</strong> 0.35 km²<br>                 📈 <strong>Average/image:</strong> 0.50             </div>         </div>     </div>     </div>`)[0];
+                popup_b193cde9fa282ebbde6381fc4af5ba65.setContent(html_5a032aba531b2dd4721e128d0a8827a5);
+            
+        
+
+        circle_marker_41ff60eddc844bebc86821244b1b8f87.bindPopup(popup_b193cde9fa282ebbde6381fc4af5ba65)
+        ;
+
+        
+    
+    
+            circle_marker_41ff60eddc844bebc86821244b1b8f87.bindTooltip(
+                `<div>
+                     🔴 BARRA FUNDA: 20.2 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ed78b30b73dd7c131f5954ee2a52d18a = L.circleMarker(
+                [-23.515, -46.413],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 21.59244264507422, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_725b7630acf8bfcd457831732577d01b = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_5cb854de3b89c7d5fef63d711e431e0d = $(`<div id="html_5cb854de3b89c7d5fef63d711e431e0d" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 VILA CURUCA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">18.0</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 9<br>                 📏 <strong>Area:</strong> 0.22 km²<br>                 📈 <strong>Average/image:</strong> 0.44             </div>         </div>     </div>     </div>`)[0];
+                popup_725b7630acf8bfcd457831732577d01b.setContent(html_5cb854de3b89c7d5fef63d711e431e0d);
+            
+        
+
+        circle_marker_ed78b30b73dd7c131f5954ee2a52d18a.bindPopup(popup_725b7630acf8bfcd457831732577d01b)
+        ;
+
+        
+    
+    
+            circle_marker_ed78b30b73dd7c131f5954ee2a52d18a.bindTooltip(
+                `<div>
+                     🔴 VILA CURUCA: 18.0 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5272ee920e80eca875c233946dfd86a1 = L.circleMarker(
+                [-23.682, -46.652],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.4331983805668, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_9f61e2177fd9ec6de650cc4397bce8d4 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_3ac7eca22d3e2941895049ddf17c902f = $(`<div id="html_3ac7eca22d3e2941895049ddf17c902f" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 CIDADE ADEMAR             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">16.2</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 10<br>                 📏 <strong>Area:</strong> 0.25 km²<br>                 📈 <strong>Average/image:</strong> 0.40             </div>         </div>     </div>     </div>`)[0];
+                popup_9f61e2177fd9ec6de650cc4397bce8d4.setContent(html_3ac7eca22d3e2941895049ddf17c902f);
+            
+        
+
+        circle_marker_5272ee920e80eca875c233946dfd86a1.bindPopup(popup_9f61e2177fd9ec6de650cc4397bce8d4)
+        ;
+
+        
+    
+    
+            circle_marker_5272ee920e80eca875c233946dfd86a1.bindTooltip(
+                `<div>
+                     🔴 CIDADE ADEMAR: 16.2 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6daab9f1e0f136073fa11becda499005 = L.circleMarker(
+                [-23.532, -46.599],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#e74c3c", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.4331983805668, "stroke": true, "weight": 3}
+            ).addTo(feature_group_88c519edbd3db4b25746bb2004086a6f);
+        
+    
+        var popup_d32d0e7078083213ff0b8dd94aecccb9 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_a0756ae767609e5730eb7624007c0510 = $(`<div id="html_a0756ae767609e5730eb7624007c0510" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #e74c3c, #e74c3cdd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🔴 BELEM             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">16.2</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #e74c3c;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 5<br>                 📏 <strong>Area:</strong> 0.12 km²<br>                 📈 <strong>Average/image:</strong> 0.40             </div>         </div>     </div>     </div>`)[0];
+                popup_d32d0e7078083213ff0b8dd94aecccb9.setContent(html_a0756ae767609e5730eb7624007c0510);
+            
+        
+
+        circle_marker_6daab9f1e0f136073fa11becda499005.bindPopup(popup_d32d0e7078083213ff0b8dd94aecccb9)
+        ;
+
+        
+    
+    
+            circle_marker_6daab9f1e0f136073fa11becda499005.bindTooltip(
+                `<div>
+                     🔴 BELEM: 16.2 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_88c519edbd3db4b25746bb2004086a6f.addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var feature_group_bb02491a7881addc311130658cf621b0 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_cbdfd7b64d023413a3c24bf0114b3fcb = L.circleMarker(
+                [-23.603, -46.472],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16.194331983805668, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_20083c7a2f879ee30cb3b61ad0deb5b9 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_034a7a84a36fa99a6631972268001768 = $(`<div id="html_034a7a84a36fa99a6631972268001768" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 SAO MATEUS             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">13.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 12<br>                 📏 <strong>Area:</strong> 0.30 km²<br>                 📈 <strong>Average/image:</strong> 0.33             </div>         </div>     </div>     </div>`)[0];
+                popup_20083c7a2f879ee30cb3b61ad0deb5b9.setContent(html_034a7a84a36fa99a6631972268001768);
+            
+        
+
+        circle_marker_cbdfd7b64d023413a3c24bf0114b3fcb.bindPopup(popup_20083c7a2f879ee30cb3b61ad0deb5b9)
+        ;
+
+        
+    
+    
+            circle_marker_cbdfd7b64d023413a3c24bf0114b3fcb.bindTooltip(
+                `<div>
+                     🟡 SAO MATEUS: 13.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8f3963d1ab5cc30e32e4c3df0eb7acac = L.circleMarker(
+                [-23.559, -46.403],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15.341998721500106, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_25b30dd64ca7a9f229b17f76491d723a = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_3921d7971a5ce2c537b8f0b912d779c1 = $(`<div id="html_3921d7971a5ce2c537b8f0b912d779c1" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 GUAIANASES             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">12.8</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">6</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 19<br>                 📏 <strong>Area:</strong> 0.47 km²<br>                 📈 <strong>Average/image:</strong> 0.32             </div>         </div>     </div>     </div>`)[0];
+                popup_25b30dd64ca7a9f229b17f76491d723a.setContent(html_3921d7971a5ce2c537b8f0b912d779c1);
+            
+        
+
+        circle_marker_8f3963d1ab5cc30e32e4c3df0eb7acac.bindPopup(popup_25b30dd64ca7a9f229b17f76491d723a)
+        ;
+
+        
+    
+    
+            circle_marker_8f3963d1ab5cc30e32e4c3df0eb7acac.bindTooltip(
+                `<div>
+                     🟡 GUAIANASES: 12.8 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ef8ea969daf08d7d4e400a62373841ef = L.circleMarker(
+                [-23.674, -46.786],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15.182186234817813, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_a21af86b0b811fee8845225f55efa44d = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_b9a2e23aa1e9c9679bfbc68819a142e3 = $(`<div id="html_b9a2e23aa1e9c9679bfbc68819a142e3" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 CAPAO REDONDO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">12.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">5</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 16<br>                 📏 <strong>Area:</strong> 0.40 km²<br>                 📈 <strong>Average/image:</strong> 0.31             </div>         </div>     </div>     </div>`)[0];
+                popup_a21af86b0b811fee8845225f55efa44d.setContent(html_b9a2e23aa1e9c9679bfbc68819a142e3);
+            
+        
+
+        circle_marker_ef8ea969daf08d7d4e400a62373841ef.bindPopup(popup_a21af86b0b811fee8845225f55efa44d)
+        ;
+
+        
+    
+    
+            circle_marker_ef8ea969daf08d7d4e400a62373841ef.bindTooltip(
+                `<div>
+                     🟡 CAPAO REDONDO: 12.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9d2c9ba2e52b7efe85dc6c7b4bede02e = L.circleMarker(
+                [-23.502, -46.677],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12.145748987854251, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_e44249e326243e4b03aec19fa4f34a32 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_4b88caec2604b9739f92d4e750427ba0 = $(`<div id="html_4b88caec2604b9739f92d4e750427ba0" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 LIMAO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">10.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 8<br>                 📏 <strong>Area:</strong> 0.20 km²<br>                 📈 <strong>Average/image:</strong> 0.25             </div>         </div>     </div>     </div>`)[0];
+                popup_e44249e326243e4b03aec19fa4f34a32.setContent(html_4b88caec2604b9739f92d4e750427ba0);
+            
+        
+
+        circle_marker_9d2c9ba2e52b7efe85dc6c7b4bede02e.bindPopup(popup_e44249e326243e4b03aec19fa4f34a32)
+        ;
+
+        
+    
+    
+            circle_marker_9d2c9ba2e52b7efe85dc6c7b4bede02e.bindTooltip(
+                `<div>
+                     🟡 LIMAO: 10.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_799f9159246225c09e606adc1955bddc = L.circleMarker(
+                [-23.611, -46.504],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.431293165039294, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_94b82040e47073dc143ed31ea07190a8 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_dd59cbf92f0616cdb48e974941d2b3fb = $(`<div id="html_dd59cbf92f0616cdb48e974941d2b3fb" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 SAPOPEMBA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">9.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 17<br>                 📏 <strong>Area:</strong> 0.42 km²<br>                 📈 <strong>Average/image:</strong> 0.23             </div>         </div>     </div>     </div>`)[0];
+                popup_94b82040e47073dc143ed31ea07190a8.setContent(html_dd59cbf92f0616cdb48e974941d2b3fb);
+            
+        
+
+        circle_marker_799f9159246225c09e606adc1955bddc.bindPopup(popup_94b82040e47073dc143ed31ea07190a8)
+        ;
+
+        
+    
+    
+            circle_marker_799f9159246225c09e606adc1955bddc.bindTooltip(
+                `<div>
+                     🟡 SAPOPEMBA: 9.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_56cda5d36a9deac9f4094de39f3ce8ab = L.circleMarker(
+                [-23.504, -46.518],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.211460604173155, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_679722d133d8ea17f9fe50ce155ed5aa = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_5621b046417e42564e9d31f934ce6db4 = $(`<div id="html_5621b046417e42564e9d31f934ce6db4" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 CANGAIBA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">9.3</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">3</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 13<br>                 📏 <strong>Area:</strong> 0.32 km²<br>                 📈 <strong>Average/image:</strong> 0.23             </div>         </div>     </div>     </div>`)[0];
+                popup_679722d133d8ea17f9fe50ce155ed5aa.setContent(html_5621b046417e42564e9d31f934ce6db4);
+            
+        
+
+        circle_marker_56cda5d36a9deac9f4094de39f3ce8ab.bindPopup(popup_679722d133d8ea17f9fe50ce155ed5aa)
+        ;
+
+        
+    
+    
+            circle_marker_56cda5d36a9deac9f4094de39f3ce8ab.bindTooltip(
+                `<div>
+                     🟡 CANGAIBA: 9.3 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_db543b8a495d86ec25ff2a0d066a2eaa = L.circleMarker(
+                [-23.447, -46.734],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.104684788895314, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_ad5f67b7bbf3cec60fef438f29490249 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_2b8cdc7c6e6b5efd3e43d44a0e188d98 = $(`<div id="html_2b8cdc7c6e6b5efd3e43d44a0e188d98" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 JARAGUA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">9.3</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">8</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 35<br>                 📏 <strong>Area:</strong> 0.86 km²<br>                 📈 <strong>Average/image:</strong> 0.23             </div>         </div>     </div>     </div>`)[0];
+                popup_ad5f67b7bbf3cec60fef438f29490249.setContent(html_2b8cdc7c6e6b5efd3e43d44a0e188d98);
+            
+        
+
+        circle_marker_db543b8a495d86ec25ff2a0d066a2eaa.bindPopup(popup_ad5f67b7bbf3cec60fef438f29490249)
+        ;
+
+        
+    
+    
+            circle_marker_db543b8a495d86ec25ff2a0d066a2eaa.bindTooltip(
+                `<div>
+                     🟡 JARAGUA: 9.3 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b521c2bd4d20a4de5e763e47ceb93385 = L.circleMarker(
+                [-23.816, -46.723],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.688259109311742, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_a886152ba58b14da7a1ed3032ecbfd3f = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_4b66dbcb97f5560f557cdd429d12542a = $(`<div id="html_4b66dbcb97f5560f557cdd429d12542a" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 PARELHEIROS             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">8.9</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">11</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 50<br>                 📏 <strong>Area:</strong> 1.23 km²<br>                 📈 <strong>Average/image:</strong> 0.22             </div>         </div>     </div>     </div>`)[0];
+                popup_a886152ba58b14da7a1ed3032ecbfd3f.setContent(html_4b66dbcb97f5560f557cdd429d12542a);
+            
+        
+
+        circle_marker_b521c2bd4d20a4de5e763e47ceb93385.bindPopup(popup_a886152ba58b14da7a1ed3032ecbfd3f)
+        ;
+
+        
+    
+    
+            circle_marker_b521c2bd4d20a4de5e763e47ceb93385.bindTooltip(
+                `<div>
+                     🟡 PARELHEIROS: 8.9 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_46b62d7677888867b794821abfe63c02 = L.circleMarker(
+                [-23.708, -46.64],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.051654334775934, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_560e21ba79b431d246983b23c4f552a2 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_2d56cfdfb3d6740bf3f77f000a65fee5 = $(`<div id="html_2d56cfdfb3d6740bf3f77f000a65fee5" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 PEDREIRA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">8.4</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">6</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 29<br>                 📏 <strong>Area:</strong> 0.72 km²<br>                 📈 <strong>Average/image:</strong> 0.21             </div>         </div>     </div>     </div>`)[0];
+                popup_560e21ba79b431d246983b23c4f552a2.setContent(html_2d56cfdfb3d6740bf3f77f000a65fee5);
+            
+        
+
+        circle_marker_46b62d7677888867b794821abfe63c02.bindPopup(popup_560e21ba79b431d246983b23c4f552a2)
+        ;
+
+        
+    
+    
+            circle_marker_46b62d7677888867b794821abfe63c02.bindTooltip(
+                `<div>
+                     🟡 PEDREIRA: 8.4 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_703ddd0269db10fdaf20de74405447b4 = L.circleMarker(
+                [-23.5, -46.464],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_d7644aba901bea6b919a69960515d710 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_cd6f211ec759287105330200950bae88 = $(`<div id="html_cd6f211ec759287105330200950bae88" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 VILA JACUI             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">8.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 10<br>                 📏 <strong>Area:</strong> 0.25 km²<br>                 📈 <strong>Average/image:</strong> 0.20             </div>         </div>     </div>     </div>`)[0];
+                popup_d7644aba901bea6b919a69960515d710.setContent(html_cd6f211ec759287105330200950bae88);
+            
+        
+
+        circle_marker_703ddd0269db10fdaf20de74405447b4.bindPopup(popup_d7644aba901bea6b919a69960515d710)
+        ;
+
+        
+    
+    
+            circle_marker_703ddd0269db10fdaf20de74405447b4.bindTooltip(
+                `<div>
+                     🟡 VILA JACUI: 8.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7661a4c2a56e7374535c6298b7b22aef = L.circleMarker(
+                [-23.482, -46.404],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_bd11d4f681495f59b898e9c380afbc3a = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_07c7eeeb0474f4d4c60952af5049a21c = $(`<div id="html_07c7eeeb0474f4d4c60952af5049a21c" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 JARDIM HELENA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">8.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 10<br>                 📏 <strong>Area:</strong> 0.25 km²<br>                 📈 <strong>Average/image:</strong> 0.20             </div>         </div>     </div>     </div>`)[0];
+                popup_bd11d4f681495f59b898e9c380afbc3a.setContent(html_07c7eeeb0474f4d4c60952af5049a21c);
+            
+        
+
+        circle_marker_7661a4c2a56e7374535c6298b7b22aef.bindPopup(popup_bd11d4f681495f59b898e9c380afbc3a)
+        ;
+
+        
+    
+    
+            circle_marker_7661a4c2a56e7374535c6298b7b22aef.bindTooltip(
+                `<div>
+                     🟡 JARDIM HELENA: 8.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3c84d143703fda2a1ace0f51b5e8fa94 = L.circleMarker(
+                [-23.491, -46.485],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_375104c203187554d67d36399ca0619c = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_fed7fd5ff2d8ae2180761bcb54a6c01e = $(`<div id="html_fed7fd5ff2d8ae2180761bcb54a6c01e" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 ERMELINO MATARAZZO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">7.4</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 11<br>                 📏 <strong>Area:</strong> 0.27 km²<br>                 📈 <strong>Average/image:</strong> 0.18             </div>         </div>     </div>     </div>`)[0];
+                popup_375104c203187554d67d36399ca0619c.setContent(html_fed7fd5ff2d8ae2180761bcb54a6c01e);
+            
+        
+
+        circle_marker_3c84d143703fda2a1ace0f51b5e8fa94.bindPopup(popup_375104c203187554d67d36399ca0619c)
+        ;
+
+        
+    
+    
+            circle_marker_3c84d143703fda2a1ace0f51b5e8fa94.bindTooltip(
+                `<div>
+                     🟡 ERMELINO MATARAZZO: 7.4 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e4f682609725c21c84a88479641759d6 = L.circleMarker(
+                [-23.482, -46.73],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_d95f8641f6dadc215b2dcb6270970f8d = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_966501915b1b523bbee95277304c81a6 = $(`<div id="html_966501915b1b523bbee95277304c81a6" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 PIRITUBA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">6.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">5</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 30<br>                 📏 <strong>Area:</strong> 0.74 km²<br>                 📈 <strong>Average/image:</strong> 0.17             </div>         </div>     </div>     </div>`)[0];
+                popup_d95f8641f6dadc215b2dcb6270970f8d.setContent(html_966501915b1b523bbee95277304c81a6);
+            
+        
+
+        circle_marker_e4f682609725c21c84a88479641759d6.bindPopup(popup_d95f8641f6dadc215b2dcb6270970f8d)
+        ;
+
+        
+    
+    
+            circle_marker_e4f682609725c21c84a88479641759d6.bindTooltip(
+                `<div>
+                     🟡 PIRITUBA: 6.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_70f3a4f35c89ed2d2c47a1c8709ee979 = L.circleMarker(
+                [-23.592, -46.786],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_80b5156d2a2607477cdc964269c46fce = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_76f97b4fb1e6a74b97bb671672795788 = $(`<div id="html_76f97b4fb1e6a74b97bb671672795788" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 RAPOSO TAVARES             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">5.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">3</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 22<br>                 📏 <strong>Area:</strong> 0.54 km²<br>                 📈 <strong>Average/image:</strong> 0.14             </div>         </div>     </div>     </div>`)[0];
+                popup_80b5156d2a2607477cdc964269c46fce.setContent(html_76f97b4fb1e6a74b97bb671672795788);
+            
+        
+
+        circle_marker_70f3a4f35c89ed2d2c47a1c8709ee979.bindPopup(popup_80b5156d2a2607477cdc964269c46fce)
+        ;
+
+        
+    
+    
+            circle_marker_70f3a4f35c89ed2d2c47a1c8709ee979.bindTooltip(
+                `<div>
+                     🟡 RAPOSO TAVARES: 5.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c67063ac5e4d6c97cf777c66ce41062a = L.circleMarker(
+                [-23.671, -46.745],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_767ed054dd25f340f744effa5ef727b8 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_9774c62970fc10b87369862c658252e0 = $(`<div id="html_9774c62970fc10b87369862c658252e0" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 JARDIM SAO LUIS             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">5.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">3</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 22<br>                 📏 <strong>Area:</strong> 0.54 km²<br>                 📈 <strong>Average/image:</strong> 0.14             </div>         </div>     </div>     </div>`)[0];
+                popup_767ed054dd25f340f744effa5ef727b8.setContent(html_9774c62970fc10b87369862c658252e0);
+            
+        
+
+        circle_marker_c67063ac5e4d6c97cf777c66ce41062a.bindPopup(popup_767ed054dd25f340f744effa5ef727b8)
+        ;
+
+        
+    
+    
+            circle_marker_c67063ac5e4d6c97cf777c66ce41062a.bindTooltip(
+                `<div>
+                     🟡 JARDIM SAO LUIS: 5.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9f6135c37726761a8767202fa8be1217 = L.circleMarker(
+                [-23.728, -46.7],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f39c12", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_bb02491a7881addc311130658cf621b0);
+        
+    
+        var popup_211ffa2dc846e5ff2ff4799cc3f5f397 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_e16a4d1bf7b3ff97ba89d5c9861d3c88 = $(`<div id="html_e16a4d1bf7b3ff97ba89d5c9861d3c88" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #f39c12, #f39c12dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟡 CIDADE DUTRA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">5.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #f39c12;">3</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 24<br>                 📏 <strong>Area:</strong> 0.59 km²<br>                 📈 <strong>Average/image:</strong> 0.12             </div>         </div>     </div>     </div>`)[0];
+                popup_211ffa2dc846e5ff2ff4799cc3f5f397.setContent(html_e16a4d1bf7b3ff97ba89d5c9861d3c88);
+            
+        
+
+        circle_marker_9f6135c37726761a8767202fa8be1217.bindPopup(popup_211ffa2dc846e5ff2ff4799cc3f5f397)
+        ;
+
+        
+    
+    
+            circle_marker_9f6135c37726761a8767202fa8be1217.bindTooltip(
+                `<div>
+                     🟡 CIDADE DUTRA: 5.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_bb02491a7881addc311130658cf621b0.addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var feature_group_1e638b38d775aaee9f6ab9fb36484512 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_4f8cc9367058cdfeb9facc3087de35e9 = L.circleMarker(
+                [-23.515, -46.568],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_ae0445e08681d8adbe56850effefde53 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_0fdb2234d73d407d405cccca8db94886 = $(`<div id="html_0fdb2234d73d407d405cccca8db94886" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 VILA MARIA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">4.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 9<br>                 📏 <strong>Area:</strong> 0.22 km²<br>                 📈 <strong>Average/image:</strong> 0.11             </div>         </div>     </div>     </div>`)[0];
+                popup_ae0445e08681d8adbe56850effefde53.setContent(html_0fdb2234d73d407d405cccca8db94886);
+            
+        
+
+        circle_marker_4f8cc9367058cdfeb9facc3087de35e9.bindPopup(popup_ae0445e08681d8adbe56850effefde53)
+        ;
+
+        
+    
+    
+            circle_marker_4f8cc9367058cdfeb9facc3087de35e9.bindTooltip(
+                `<div>
+                     🟢 VILA MARIA: 4.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_cfec1135f0e4015d3c4727c80e0adcb9 = L.circleMarker(
+                [-23.459, -46.693],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_6e1d535811405dfbbfb7b1b4cb5dc0b7 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_71422b9164a675134f2082c347c13811 = $(`<div id="html_71422b9164a675134f2082c347c13811" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 BRASILANDIA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">4.3</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 19<br>                 📏 <strong>Area:</strong> 0.47 km²<br>                 📈 <strong>Average/image:</strong> 0.10             </div>         </div>     </div>     </div>`)[0];
+                popup_6e1d535811405dfbbfb7b1b4cb5dc0b7.setContent(html_71422b9164a675134f2082c347c13811);
+            
+        
+
+        circle_marker_cfec1135f0e4015d3c4727c80e0adcb9.bindPopup(popup_6e1d535811405dfbbfb7b1b4cb5dc0b7)
+        ;
+
+        
+    
+    
+            circle_marker_cfec1135f0e4015d3c4727c80e0adcb9.bindTooltip(
+                `<div>
+                     🟢 BRASILANDIA: 4.3 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_be002102d6ede83fc8e8c2f567d078d9 = L.circleMarker(
+                [-23.588, -46.399],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_588bad7e6098bc1ced4e6912c993036f = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_75fa5811e509d594a880928ad34b8d6f = $(`<div id="html_75fa5811e509d594a880928ad34b8d6f" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 CIDADE TIRADENTES             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3.9</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 31<br>                 📏 <strong>Area:</strong> 0.77 km²<br>                 📈 <strong>Average/image:</strong> 0.10             </div>         </div>     </div>     </div>`)[0];
+                popup_588bad7e6098bc1ced4e6912c993036f.setContent(html_75fa5811e509d594a880928ad34b8d6f);
+            
+        
+
+        circle_marker_be002102d6ede83fc8e8c2f567d078d9.bindPopup(popup_588bad7e6098bc1ced4e6912c993036f)
+        ;
+
+        
+    
+    
+            circle_marker_be002102d6ede83fc8e8c2f567d078d9.bindTooltip(
+                `<div>
+                     🟢 CIDADE TIRADENTES: 3.9 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e2599e77757ad4bf34bcd909d4fc3c98 = L.circleMarker(
+                [-23.629, -46.454],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_7b0073683d205e6a84703458543dbad1 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_00709865ed8b8d7ef232b7f01370aea1 = $(`<div id="html_00709865ed8b8d7ef232b7f01370aea1" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 SAO RAFAEL             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3.9</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 21<br>                 📏 <strong>Area:</strong> 0.52 km²<br>                 📈 <strong>Average/image:</strong> 0.10             </div>         </div>     </div>     </div>`)[0];
+                popup_7b0073683d205e6a84703458543dbad1.setContent(html_00709865ed8b8d7ef232b7f01370aea1);
+            
+        
+
+        circle_marker_e2599e77757ad4bf34bcd909d4fc3c98.bindPopup(popup_7b0073683d205e6a84703458543dbad1)
+        ;
+
+        
+    
+    
+            circle_marker_e2599e77757ad4bf34bcd909d4fc3c98.bindTooltip(
+                `<div>
+                     🟢 SAO RAFAEL: 3.9 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_05c3f85a69ea97590f09e2531758b727 = L.circleMarker(
+                [-23.71, -46.774],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_9194ce755dd5f6b77c48302eac65d15a = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_fa0fb5d3c91bfd27ac30591c0fda438c = $(`<div id="html_fa0fb5d3c91bfd27ac30591c0fda438c" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 JARDIM ANGELA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3.8</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">4</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 43<br>                 📏 <strong>Area:</strong> 1.06 km²<br>                 📈 <strong>Average/image:</strong> 0.09             </div>         </div>     </div>     </div>`)[0];
+                popup_9194ce755dd5f6b77c48302eac65d15a.setContent(html_fa0fb5d3c91bfd27ac30591c0fda438c);
+            
+        
+
+        circle_marker_05c3f85a69ea97590f09e2531758b727.bindPopup(popup_9194ce755dd5f6b77c48302eac65d15a)
+        ;
+
+        
+    
+    
+            circle_marker_05c3f85a69ea97590f09e2531758b727.bindTooltip(
+                `<div>
+                     🟢 JARDIM ANGELA: 3.8 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a837e1f713b5ce2185558330a5e5e93d = L.circleMarker(
+                [-23.564, -46.492],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_d352754ba24429a25358db70cc06d4d0 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_310528d1ea587aedfbaa2a08e39bf298 = $(`<div id="html_310528d1ea587aedfbaa2a08e39bf298" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 CIDADE LIDER             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3.7</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 11<br>                 📏 <strong>Area:</strong> 0.27 km²<br>                 📈 <strong>Average/image:</strong> 0.09             </div>         </div>     </div>     </div>`)[0];
+                popup_d352754ba24429a25358db70cc06d4d0.setContent(html_310528d1ea587aedfbaa2a08e39bf298);
+            
+        
+
+        circle_marker_a837e1f713b5ce2185558330a5e5e93d.bindPopup(popup_d352754ba24429a25358db70cc06d4d0)
+        ;
+
+        
+    
+    
+            circle_marker_a837e1f713b5ce2185558330a5e5e93d.bindTooltip(
+                `<div>
+                     🟢 CIDADE LIDER: 3.7 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c06d72f298d75cc54e53625ae9768772 = L.circleMarker(
+                [-23.763, -46.685],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_5ecd3970f0e6d1d00c9056bd633e32f5 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_c96580d9fd68febaf2d91244751cd358 = $(`<div id="html_c96580d9fd68febaf2d91244751cd358" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 GRAJAU             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3.6</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">5</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 57<br>                 📏 <strong>Area:</strong> 1.41 km²<br>                 📈 <strong>Average/image:</strong> 0.09             </div>         </div>     </div>     </div>`)[0];
+                popup_5ecd3970f0e6d1d00c9056bd633e32f5.setContent(html_c96580d9fd68febaf2d91244751cd358);
+            
+        
+
+        circle_marker_c06d72f298d75cc54e53625ae9768772.bindPopup(popup_5ecd3970f0e6d1d00c9056bd633e32f5)
+        ;
+
+        
+    
+    
+            circle_marker_c06d72f298d75cc54e53625ae9768772.bindTooltip(
+                `<div>
+                     🟢 GRAJAU: 3.6 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b650833aa93c045cb2f042a933292db3 = L.circleMarker(
+                [-23.404, -46.741],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_793b0ef02fd30c38f65ee3ed1ab1016c = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_cd443fa3a9162f4e380180b9eb6b93e4 = $(`<div id="html_cd443fa3a9162f4e380180b9eb6b93e4" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 PERUS             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">3.2</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">2</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 25<br>                 📏 <strong>Area:</strong> 0.62 km²<br>                 📈 <strong>Average/image:</strong> 0.08             </div>         </div>     </div>     </div>`)[0];
+                popup_793b0ef02fd30c38f65ee3ed1ab1016c.setContent(html_cd443fa3a9162f4e380180b9eb6b93e4);
+            
+        
+
+        circle_marker_b650833aa93c045cb2f042a933292db3.bindPopup(popup_793b0ef02fd30c38f65ee3ed1ab1016c)
+        ;
+
+        
+    
+    
+            circle_marker_b650833aa93c045cb2f042a933292db3.bindTooltip(
+                `<div>
+                     🟢 PERUS: 3.2 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d63dc85afb9465622de012f12590bee7 = L.circleMarker(
+                [-23.629, -46.595],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_ac8a2359dac3913f41f8dbd0903575f1 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_efd9393d552b5fa6df5d47999d838c07 = $(`<div id="html_efd9393d552b5fa6df5d47999d838c07" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 SACOMA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">2.5</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 16<br>                 📏 <strong>Area:</strong> 0.40 km²<br>                 📈 <strong>Average/image:</strong> 0.06             </div>         </div>     </div>     </div>`)[0];
+                popup_ac8a2359dac3913f41f8dbd0903575f1.setContent(html_efd9393d552b5fa6df5d47999d838c07);
+            
+        
+
+        circle_marker_d63dc85afb9465622de012f12590bee7.bindPopup(popup_ac8a2359dac3913f41f8dbd0903575f1)
+        ;
+
+        
+    
+    
+            circle_marker_d63dc85afb9465622de012f12590bee7.bindTooltip(
+                `<div>
+                     🟢 SACOMA: 2.5 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_13db9e97b6a6f78c74f8f64983960c44 = L.circleMarker(
+                [-23.441, -46.787],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_b0f3c407341f6e76ea3a62995f44541d = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_7f7efc63bcdea67d92ee02c498b4c88a = $(`<div id="html_7f7efc63bcdea67d92ee02c498b4c88a" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 ANHANGUERA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">2.1</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 19<br>                 📏 <strong>Area:</strong> 0.47 km²<br>                 📈 <strong>Average/image:</strong> 0.05             </div>         </div>     </div>     </div>`)[0];
+                popup_b0f3c407341f6e76ea3a62995f44541d.setContent(html_7f7efc63bcdea67d92ee02c498b4c88a);
+            
+        
+
+        circle_marker_13db9e97b6a6f78c74f8f64983960c44.bindPopup(popup_b0f3c407341f6e76ea3a62995f44541d)
+        ;
+
+        
+    
+    
+            circle_marker_13db9e97b6a6f78c74f8f64983960c44.bindTooltip(
+                `<div>
+                     🟢 ANHANGUERA: 2.1 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b3c9b72c241f5ebcfc2ac17355585749 = L.circleMarker(
+                [-23.572, -46.432],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_ae4e7c42b99863a1eec53d78efa9f653 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_2e0267a992571d0d36058806a4bc384a = $(`<div id="html_2e0267a992571d0d36058806a4bc384a" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 JOSE BONIFACIO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1.9</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 21<br>                 📏 <strong>Area:</strong> 0.52 km²<br>                 📈 <strong>Average/image:</strong> 0.05             </div>         </div>     </div>     </div>`)[0];
+                popup_ae4e7c42b99863a1eec53d78efa9f653.setContent(html_2e0267a992571d0d36058806a4bc384a);
+            
+        
+
+        circle_marker_b3c9b72c241f5ebcfc2ac17355585749.bindPopup(popup_ae4e7c42b99863a1eec53d78efa9f653)
+        ;
+
+        
+    
+    
+            circle_marker_b3c9b72c241f5ebcfc2ac17355585749.bindTooltip(
+                `<div>
+                     🟢 JOSE BONIFACIO: 1.9 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7af46e6ba84788c286976b0351af8dd0 = L.circleMarker(
+                [-23.607, -46.432],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_8253a16e2007f398024800e09e9aa04d = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_43e0366fe619b3eda23f45bfacb2cd56 = $(`<div id="html_43e0366fe619b3eda23f45bfacb2cd56" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 IGUATEMI             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1.4</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">1</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 28<br>                 📏 <strong>Area:</strong> 0.69 km²<br>                 📈 <strong>Average/image:</strong> 0.04             </div>         </div>     </div>     </div>`)[0];
+                popup_8253a16e2007f398024800e09e9aa04d.setContent(html_43e0366fe619b3eda23f45bfacb2cd56);
+            
+        
+
+        circle_marker_7af46e6ba84788c286976b0351af8dd0.bindPopup(popup_8253a16e2007f398024800e09e9aa04d)
+        ;
+
+        
+    
+    
+            circle_marker_7af46e6ba84788c286976b0351af8dd0.bindTooltip(
+                `<div>
+                     🟢 IGUATEMI: 1.4 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ce7013bef81e5ea46337207d34809f59 = L.circleMarker(
+                [-23.534, -46.408],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_74388c7bec7a2f9354feeba8433948f4 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_cbbd2adea39f308b2f18909268456cee = $(`<div id="html_cbbd2adea39f308b2f18909268456cee" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 LAJEADO             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0.0</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 17<br>                 📏 <strong>Area:</strong> 0.42 km²<br>                 📈 <strong>Average/image:</strong> 0.00             </div>         </div>     </div>     </div>`)[0];
+                popup_74388c7bec7a2f9354feeba8433948f4.setContent(html_cbbd2adea39f308b2f18909268456cee);
+            
+        
+
+        circle_marker_ce7013bef81e5ea46337207d34809f59.bindPopup(popup_74388c7bec7a2f9354feeba8433948f4)
+        ;
+
+        
+    
+    
+            circle_marker_ce7013bef81e5ea46337207d34809f59.bindTooltip(
+                `<div>
+                     🟢 LAJEADO: 0.0 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_253630059191c0ba2039fedd319b542d = L.circleMarker(
+                [-23.547, -46.751],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_002ea658049eb9267f4c6d712d4d76c5 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_9c88199c0a151f25e3fd935705812aec = $(`<div id="html_9c88199c0a151f25e3fd935705812aec" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 JAGUARE             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0.0</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 8<br>                 📏 <strong>Area:</strong> 0.20 km²<br>                 📈 <strong>Average/image:</strong> 0.00             </div>         </div>     </div>     </div>`)[0];
+                popup_002ea658049eb9267f4c6d712d4d76c5.setContent(html_9c88199c0a151f25e3fd935705812aec);
+            
+        
+
+        circle_marker_253630059191c0ba2039fedd319b542d.bindPopup(popup_002ea658049eb9267f4c6d712d4d76c5)
+        ;
+
+        
+    
+    
+            circle_marker_253630059191c0ba2039fedd319b542d.bindTooltip(
+                `<div>
+                     🟢 JAGUARE: 0.0 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_13db0df10761df97ef4c679e42178311 = L.circleMarker(
+                [-23.456, -46.577],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_10c8ce04b5d413c4d964d4a3efc0be71 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_cfaf6b7149e5e6271903a176d5381f84 = $(`<div id="html_cfaf6b7149e5e6271903a176d5381f84" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 JACANA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0.0</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 6<br>                 📏 <strong>Area:</strong> 0.15 km²<br>                 📈 <strong>Average/image:</strong> 0.00             </div>         </div>     </div>     </div>`)[0];
+                popup_10c8ce04b5d413c4d964d4a3efc0be71.setContent(html_cfaf6b7149e5e6271903a176d5381f84);
+            
+        
+
+        circle_marker_13db0df10761df97ef4c679e42178311.bindPopup(popup_10c8ce04b5d413c4d964d4a3efc0be71)
+        ;
+
+        
+    
+    
+            circle_marker_13db0df10761df97ef4c679e42178311.bindTooltip(
+                `<div>
+                     🟢 JACANA: 0.0 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_61ce5f99407d0cbbb6da536dd2c2928d = L.circleMarker(
+                [-23.664, -46.643],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_82c4a54c254641fd5f48cc7ffb519ebc = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_3bb80f4804ddfaa0e781c12ee6325b48 = $(`<div id="html_3bb80f4804ddfaa0e781c12ee6325b48" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 JABAQUARA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0.0</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 9<br>                 📏 <strong>Area:</strong> 0.22 km²<br>                 📈 <strong>Average/image:</strong> 0.00             </div>         </div>     </div>     </div>`)[0];
+                popup_82c4a54c254641fd5f48cc7ffb519ebc.setContent(html_3bb80f4804ddfaa0e781c12ee6325b48);
+            
+        
+
+        circle_marker_61ce5f99407d0cbbb6da536dd2c2928d.bindPopup(popup_82c4a54c254641fd5f48cc7ffb519ebc)
+        ;
+
+        
+    
+    
+            circle_marker_61ce5f99407d0cbbb6da536dd2c2928d.bindTooltip(
+                `<div>
+                     🟢 JABAQUARA: 0.0 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f8e3f7ba60c9eb54c64a4ae431fb6113 = L.circleMarker(
+                [-23.507, -46.384],
+                {"bubblingMouseEvents": true, "color": "white", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#27ae60", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10, "stroke": true, "weight": 3}
+            ).addTo(feature_group_1e638b38d775aaee9f6ab9fb36484512);
+        
+    
+        var popup_367286b544abffa5649601c1aa10c510 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_9f6fec258a4250a509da4425e68597d6 = $(`<div id="html_9f6fec258a4250a509da4425e68597d6" style="width: 100.0%; height: 100.0%;">     <div style="width: 280px; font-family: 'Segoe UI', Arial, sans-serif;">         <div style="background: linear-gradient(135deg, #27ae60, #27ae60dd);                      color: white; padding: 15px; border-radius: 10px 10px 0 0;                      margin: -10px -10px 10px -10px;">             <h3 style="margin: 0; font-size: 16px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">                 🟢 ITAIM PAULISTA             </h3>         </div>         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 0 0 10px 10px;                      border: 1px solid #e9ecef;">             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0.0</div>                     <div style="font-size: 11px; color: #666;">pools/km²</div>                 </div>                 <div style="text-align: center; background: white; padding: 8px; border-radius: 5px;                              box-shadow: 0 2px 4px rgba(0,0,0,0.1);">                     <div style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>                     <div style="font-size: 11px; color: #666;">total detected</div>                 </div>             </div>             <div style="font-size: 12px; color: #666; line-height: 1.4;">                 📊 <strong>Images:</strong> 13<br>                 📏 <strong>Area:</strong> 0.32 km²<br>                 📈 <strong>Average/image:</strong> 0.00             </div>         </div>     </div>     </div>`)[0];
+                popup_367286b544abffa5649601c1aa10c510.setContent(html_9f6fec258a4250a509da4425e68597d6);
+            
+        
+
+        circle_marker_f8e3f7ba60c9eb54c64a4ae431fb6113.bindPopup(popup_367286b544abffa5649601c1aa10c510)
+        ;
+
+        
+    
+    
+            circle_marker_f8e3f7ba60c9eb54c64a4ae431fb6113.bindTooltip(
+                `<div>
+                     🟢 ITAIM PAULISTA: 0.0 piscinas/km²
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_1e638b38d775aaee9f6ab9fb36484512.addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var marker_c4f7d5147ef0be3d4ad6e70144ae9dd3 = L.marker(
+                [-23.569705882352938, -46.61588235294117],
+                {
+}
+            ).addTo(map_867be7416263021b1af06b027f838b5a);
+        
+    
+            var icon_493df6ccd099b8fd0482b743104f3ded = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ebfefcd1db572e7a0cd115a5bdff7546 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_305fc5d0ed344e71848255cd003e6b10 = $(`<div id="html_305fc5d0ed344e71848255cd003e6b10" style="width: 100.0%; height: 100.0%;"><b>📍 Centro de São Paulo</b><br></div>`)[0];
+                popup_ebfefcd1db572e7a0cd115a5bdff7546.setContent(html_305fc5d0ed344e71848255cd003e6b10);
+            
+        
+
+        marker_c4f7d5147ef0be3d4ad6e70144ae9dd3.bindPopup(popup_ebfefcd1db572e7a0cd115a5bdff7546)
+        ;
+
+        
+    
+    
+                marker_c4f7d5147ef0be3d4ad6e70144ae9dd3.setIcon(icon_493df6ccd099b8fd0482b743104f3ded);
+            
+    
+            var layer_control_0c7d649ab19ea137b0d387489795bb18_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_d748efdac0ad7cf204c4c190154d72e2,
+                    "Satellite" : tile_layer_39f3d7f5fe2a463d0f16645f07ca7e24,
+                },
+                overlays :  {
+                    "Density Heatmap" : heat_map_869a02b57f07dff0b61ca789afaac1dd,
+                    "\ud83d\udd34 High Density (\u003e15 pools/km\u00b2)" : feature_group_88c519edbd3db4b25746bb2004086a6f,
+                    "\ud83d\udfe1 Medium  Density (5-15 pools/km\u00b2)" : feature_group_bb02491a7881addc311130658cf621b0,
+                    "\ud83d\udfe2 Low Density (\u003c5 pools/km\u00b2)" : feature_group_1e638b38d775aaee9f6ab9fb36484512,
+                },
+            };
+            let layer_control_0c7d649ab19ea137b0d387489795bb18 = L.control.layers(
+                layer_control_0c7d649ab19ea137b0d387489795bb18_layers.base_layers,
+                layer_control_0c7d649ab19ea137b0d387489795bb18_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_867be7416263021b1af06b027f838b5a);
+
+        
+</script>
+</html>
