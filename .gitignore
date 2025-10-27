@@ -11,6 +11,5 @@ test
 valid
 dataset/
 results_pools/
-results
 models/
 data/predict_images/
