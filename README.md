@@ -238,7 +238,7 @@ pip install python-dotenv
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/caio-torres-seares/CloudWalk-case.git
+git clone https://github.com/caio-torres-seares/yolo-satellite-pool-finetuning.git
 cd CloudWalk-case
 
 # 2. Install dependencies
